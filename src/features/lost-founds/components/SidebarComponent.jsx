@@ -33,11 +33,11 @@ function SidebarComponent({ isOpen, onClose }) {
             onClick={onClose}
             className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
           >
-            <IconX size={22} />
+            <IconX size={22} aria-hidden="true" />
           </button>
         </div>
 
-        <nav className="space-y-1">
+        <nav aria-label="Menu utama" className="space-y-1">
           {menus.map((menu) => (
             <NavLink
               key={menu.to}
@@ -48,12 +48,12 @@ function SidebarComponent({ isOpen, onClose }) {
                 clsx(
                   "flex items-center gap-3 rounded-lg px-3 py-2 font-medium",
                   isActive
-                    ? "bg-indigo-50 text-indigo-600"
+                    ? "bg-indigo-50 text-indigo-700"
                     : "text-slate-600 hover:bg-slate-100"
                 )
               }
             >
-              <menu.icon size={22} />
+              <menu.icon size={22} aria-hidden="true" />
               {menu.label}
             </NavLink>
           ))}

@@ -14,7 +14,7 @@ function UsersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold">Pengguna</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-600">
         Daftar seluruh pengguna yang terdaftar.
       </p>
 
@@ -28,6 +28,9 @@ function UsersPage() {
               <img
                 src={toImageUrl(user.photo)}
                 alt={user.name}
+                width="56"
+                height="56"
+                loading="lazy"
                 className="h-14 w-14 rounded-full object-cover"
               />
             ) : (
@@ -37,7 +40,7 @@ function UsersPage() {
             )}
             <div className="min-w-0">
               <p className="truncate font-semibold">{user.name}</p>
-              <p className="truncate text-sm text-slate-500">{user.email}</p>
+              <p className="truncate text-sm text-slate-600">{user.email}</p>
             </div>
           </div>
         ))}

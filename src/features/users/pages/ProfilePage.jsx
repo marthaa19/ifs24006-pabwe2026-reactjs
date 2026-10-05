@@ -110,6 +110,8 @@ function ProfilePage() {
             </label>
             <input
               id="name"
+              name="name"
+              autoComplete="name"
               type="text"
               value={name}
               onChange={handleNameChange}
@@ -125,6 +127,8 @@ function ProfilePage() {
             </label>
             <input
               id="email"
+              name="email"
+              autoComplete="email"
               type="email"
               value={email}
               onChange={handleEmailChange}
@@ -148,6 +152,8 @@ function ProfilePage() {
               <img
                 src={toImageUrl(profile.photo)}
                 alt={profile.name}
+                width="64"
+                height="64"
                 className="h-16 w-16 rounded-full object-cover"
               />
             ) : (
@@ -161,6 +167,7 @@ function ProfilePage() {
               </label>
               <input
                 id="photo"
+                name="photo"
                 type="file"
                 accept="image/*"
                 onChange={handlePhotoChange}
@@ -190,6 +197,8 @@ function ProfilePage() {
             </label>
             <input
               id="password"
+              name="password"
+              autoComplete="current-password"
               type="password"
               value={password}
               onChange={handlePasswordChange}
@@ -210,6 +219,8 @@ function ProfilePage() {
             </label>
             <input
               id="newPassword"
+              name="newPassword"
+              autoComplete="new-password"
               type="password"
               value={newPassword}
               onChange={handleNewPasswordChange}

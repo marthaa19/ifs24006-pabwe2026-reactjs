@@ -50,22 +50,27 @@ function LoginPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold">Masuk</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-600">
         Silakan masuk untuk melanjutkan.
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="login-email-input"
+            className="mb-1 block text-sm font-medium"
+          >
             Email
           </label>
           <input
-            id="email"
+            id="login-email-input"
+            name="email"
+            autoComplete="email"
             type="email"
             value={email}
             onChange={handleEmailChange}
             placeholder="nama@email.com"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -73,16 +78,21 @@ function LoginPage() {
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="login-password-input"
+            className="mb-1 block text-sm font-medium"
+          >
             Kata Sandi
           </label>
           <input
-            id="password"
+            id="login-password-input"
+            name="password"
+            autoComplete="current-password"
             type="password"
             value={password}
             onChange={handlePasswordChange}
             placeholder="Kata sandi"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -90,6 +100,7 @@ function LoginPage() {
         </div>
 
         <button
+          id="login-submit-button"
           type="submit"
           disabled={isLoading}
           className="w-full rounded-lg bg-indigo-600 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
@@ -98,7 +109,7 @@ function LoginPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-600">
         Belum punya akun?{" "}
         <Link
           to="/auth/register"

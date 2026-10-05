@@ -59,9 +59,9 @@ function AddModal({ onClose, onSuccess }) {
             type="button"
             aria-label="Tutup"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-500 hover:bg-slate-100"
+            className="rounded-lg p-1 text-slate-600 hover:bg-slate-100"
           >
-            <IconX size={22} />
+            <IconX size={22} aria-hidden="true" />
           </button>
         </div>
 
@@ -75,6 +75,7 @@ function AddModal({ onClose, onSuccess }) {
             </label>
             <input
               id="add-title"
+              name="title"
               type="text"
               value={title}
               onChange={handleTitleChange}
@@ -94,6 +95,7 @@ function AddModal({ onClose, onSuccess }) {
             </label>
             <textarea
               id="add-description"
+              name="description"
               rows={4}
               value={description}
               onChange={handleDescriptionChange}
@@ -113,6 +115,7 @@ function AddModal({ onClose, onSuccess }) {
             </label>
             <select
               id="add-status"
+              name="status"
               value={status}
               onChange={handleStatusChange}
               className={inputClass}

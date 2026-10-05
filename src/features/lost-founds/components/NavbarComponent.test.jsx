@@ -28,6 +28,12 @@ describe("NavbarComponent", () => {
     expect(screen.getByText("Budi")).toBeInTheDocument();
   });
 
+  it("tidak menampilkan apa pun jika profil belum ada", () => {
+    const { container } = renderNavbar(null);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it("menampilkan inisial jika pengguna tidak punya foto", () => {
     renderNavbar();
 

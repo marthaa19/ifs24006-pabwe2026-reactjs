@@ -59,22 +59,27 @@ function RegisterPage() {
   return (
     <div>
       <h2 className="text-2xl font-bold">Daftar</h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-600">
         Buat akun baru untuk mulai melapor.
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
         <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="register-name-input"
+            className="mb-1 block text-sm font-medium"
+          >
             Nama
           </label>
           <input
-            id="name"
+            id="register-name-input"
+            name="name"
+            autoComplete="name"
             type="text"
             value={name}
             onChange={handleNameChange}
             placeholder="Nama lengkap"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -82,16 +87,21 @@ function RegisterPage() {
         </div>
 
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="register-email-input"
+            className="mb-1 block text-sm font-medium"
+          >
             Email
           </label>
           <input
-            id="email"
+            id="register-email-input"
+            name="email"
+            autoComplete="email"
             type="email"
             value={email}
             onChange={handleEmailChange}
             placeholder="nama@email.com"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -99,16 +109,21 @@ function RegisterPage() {
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="register-password-input"
+            className="mb-1 block text-sm font-medium"
+          >
             Kata Sandi
           </label>
           <input
-            id="password"
+            id="register-password-input"
+            name="password"
+            autoComplete="new-password"
             type="password"
             value={password}
             onChange={handlePasswordChange}
             placeholder="Minimal 6 karakter"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">{errors.password}</p>
@@ -116,6 +131,7 @@ function RegisterPage() {
         </div>
 
         <button
+          id="register-submit-button"
           type="submit"
           disabled={isLoading}
           className="w-full rounded-lg bg-indigo-600 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
@@ -124,7 +140,7 @@ function RegisterPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-600">
         Sudah punya akun?{" "}
         <Link
           to="/auth/login"

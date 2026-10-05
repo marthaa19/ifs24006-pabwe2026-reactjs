@@ -41,7 +41,7 @@ function HomePage() {
   const summaries = [
     { label: "Total", value: lostFounds.length, color: "text-indigo-600" },
     { label: "Hilang", value: totalLost, color: "text-red-600" },
-    { label: "Ditemukan", value: totalFound, color: "text-emerald-600" },
+    { label: "Ditemukan", value: totalFound, color: "text-emerald-700" },
     { label: "Selesai", value: totalCompleted, color: "text-slate-700" },
   ];
 
@@ -58,7 +58,7 @@ function HomePage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-600">
             Ringkasan statistik dan daftar laporan.
           </p>
         </div>
@@ -67,7 +67,7 @@ function HomePage() {
           onClick={() => setIsAddOpen(true)}
           className="flex items-center gap-1 rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700"
         >
-          <IconPlus size={20} />
+          <IconPlus size={20} aria-hidden="true" />
           Tambah Laporan
         </button>
       </div>
@@ -75,7 +75,7 @@ function HomePage() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {summaries.map((summary) => (
           <div key={summary.label} className="rounded-xl bg-white p-4 shadow">
-            <p className="text-sm text-slate-500">{summary.label}</p>
+            <p className="text-sm text-slate-600">{summary.label}</p>
             <p className={clsx("mt-1 text-3xl font-extrabold", summary.color)}>
               {summary.value}
             </p>
@@ -105,7 +105,8 @@ function HomePage() {
         <div className="relative min-w-[200px] flex-1">
           <IconSearch
             size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            aria-hidden="true"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
           />
           <input
             type="text"
@@ -113,13 +114,13 @@ function HomePage() {
             placeholder="Cari judul atau deskripsi..."
             value={keyword}
             onChange={handleKeywordChange}
-            className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
         </div>
       </div>
 
       {visibleLostFounds.length === 0 ? (
-        <p className="mt-10 text-center text-slate-500">
+        <p className="mt-10 text-center text-slate-600">
           Belum ada laporan yang cocok.
         </p>
       ) : (
@@ -135,10 +136,11 @@ function HomePage() {
                   <img
                     src={toImageUrl(item.cover)}
                     alt={item.title}
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <span className="text-sm text-slate-400">Tanpa cover</span>
+                  <span className="text-sm text-slate-600">Tanpa cover</span>
                 )}
               </div>
               <div className="p-4">
@@ -159,11 +161,11 @@ function HomePage() {
                     </span>
                   )}
                 </div>
-                <h3 className="mt-2 font-semibold">{item.title}</h3>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-500">
+                <h2 className="mt-2 font-semibold">{item.title}</h2>
+                <p className="mt-1 line-clamp-2 text-sm text-slate-600">
                   {item.description}
                 </p>
-                <p className="mt-3 text-xs text-slate-400">
+                <p className="mt-3 text-xs text-slate-600">
                   {item.author.name} · {formatDate(item.created_at)}
                 </p>
               </div>

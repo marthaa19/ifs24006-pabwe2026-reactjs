@@ -27,10 +27,10 @@ function NavbarComponent({ onToggleSidebar }) {
           onClick={onToggleSidebar}
           className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden"
         >
-          <IconMenu2 size={24} />
+          <IconMenu2 size={24} aria-hidden="true" />
         </button>
         <div className="flex items-center gap-2 text-indigo-600">
-          <IconSearch size={26} />
+          <IconSearch size={26} aria-hidden="true" />
           <span className="text-lg font-extrabold">Lost &amp; Founds</span>
         </div>
       </div>
@@ -41,6 +41,8 @@ function NavbarComponent({ onToggleSidebar }) {
             <img
               src={toImageUrl(profile.photo)}
               alt={profile.name}
+              width="36"
+              height="36"
               className="h-9 w-9 rounded-full object-cover"
             />
           ) : (
@@ -55,9 +57,10 @@ function NavbarComponent({ onToggleSidebar }) {
         <button
           type="button"
           onClick={handleLogout}
+          aria-label="Keluar"
           className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
         >
-          <IconLogout size={20} />
+          <IconLogout size={20} aria-hidden="true" />
           <span className="hidden sm:block">Keluar</span>
         </button>
       </div>

@@ -40,7 +40,7 @@ function DetailPage() {
   };
 
   if (!lostFound || lostFound.id !== Number(id)) {
-    return <p className="text-center text-slate-500">Memuat...</p>;
+    return <p className="text-center text-slate-600">Memuat...</p>;
   }
 
   const isOwner = profile.id === lostFound.user_id;
@@ -52,7 +52,7 @@ function DetailPage() {
         to="/"
         className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:underline"
       >
-        <IconArrowLeft size={18} />
+        <IconArrowLeft size={18} aria-hidden="true" />
         Kembali
       </Link>
 
@@ -65,7 +65,7 @@ function DetailPage() {
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="text-slate-400">Tanpa cover</span>
+            <span className="text-slate-600">Tanpa cover</span>
           )}
         </div>
 
@@ -95,6 +95,8 @@ function DetailPage() {
               <img
                 src={authorPhoto}
                 alt={lostFound.author.name}
+                width="36"
+                height="36"
                 className="h-9 w-9 rounded-full object-cover"
               />
             ) : (
@@ -104,7 +106,7 @@ function DetailPage() {
             )}
             <div>
               <p className="text-sm font-medium">{lostFound.author.name}</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600">
                 Dibuat {formatDate(lostFound.created_at)}
               </p>
             </div>
@@ -121,7 +123,7 @@ function DetailPage() {
                 onClick={() => setIsCoverOpen(true)}
                 className="flex items-center gap-1 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium hover:bg-slate-200"
               >
-                <IconPhoto size={18} />
+                <IconPhoto size={18} aria-hidden="true" />
                 Ubah Cover
               </button>
               <button
@@ -129,7 +131,7 @@ function DetailPage() {
                 onClick={() => setIsChangeOpen(true)}
                 className="flex items-center gap-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
               >
-                <IconEdit size={18} />
+                <IconEdit size={18} aria-hidden="true" />
                 Ubah Data
               </button>
               <button
@@ -137,7 +139,7 @@ function DetailPage() {
                 onClick={handleDelete}
                 className="flex items-center gap-1 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
               >
-                <IconTrash size={18} />
+                <IconTrash size={18} aria-hidden="true" />
                 Hapus
               </button>
             </div>
