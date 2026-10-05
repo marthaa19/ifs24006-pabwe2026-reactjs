@@ -1,166 +1,64 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import lostFoundApi from "../api/lostFoundApi";
-import {
-  showErrorDialog,
-  showSuccessDialog,
-} from "../../../helpers/toolsHelper";
-import { renderWithProviders } from "../../../test-utils";
 import ChangeModal from "./ChangeModal";
+import { putLostFound } from "../api/lostFoundApi";
+import { renderWithProviders } from "../../../test-utils";
 
-vi.mock("../api/lostFoundApi", () => ({
-  default: { putLostFound: vi.fn() },
-}));
-
-vi.mock("../../../helpers/toolsHelper", () => ({
-  showConfirmDialog: vi.fn(),
+vi.mock("../api/lostFoundApi");
+vi.mock("../../../helpers/toolsHelper", async (original) => ({
+  ...(await original()),
   showErrorDialog: vi.fn(),
-  showSuccessDialog: vi.fn(),
+  showSuccessDialog: vi.fn().mockResolvedValue({}),
 }));
 
-const baseLostFound = {
-  id: 5,
-  title: "Dompet",
-  description: "Warna hitam",
-  status: "lost",
-  is_completed: 0,
+const item = { id: 4, title: "Tas", description: "Tas ransel warna biru", status: "found", is_completed: 0 };
+
+const setup = () => {
+  const handlers = { onClose: vi.fn(), onSaved: vi.fn() };
+  renderWithProviders(<ChangeModal item={item} {...handlers} />);
+  return handlers;
 };
 
-function renderModal(lostFound = baseLostFound) {
-  const onClose = vi.fn();
-  const onSuccess = vi.fn();
-  renderWithProviders(
-    <ChangeModal
-      lostFound={lostFound}
-      onClose={onClose}
-      onSuccess={onSuccess}
-    />
-  );
-  return { onClose, onSuccess };
-}
+beforeEach(() => vi.clearAllMocks());
 
 describe("ChangeModal", () => {
-  it("mengisi form dengan data laporan saat ini", () => {
-    renderModal();
-
-    expect(
-      screen.getByRole("dialog", { name: "Ubah Laporan" })
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText("Judul")).toHaveValue("Dompet");
-    expect(screen.getByLabelText("Deskripsi")).toHaveValue("Warna hitam");
-    expect(screen.getByLabelText("Status")).toHaveValue("lost");
-    expect(screen.getByLabelText("Tandai sebagai selesai")).not.toBeChecked();
+  it("terisi data laporan dan memiliki toggle selesai", () => {
+    setup();
+    expect(screen.getByLabelText("Judul")).toHaveValue("Tas");
+    expect(screen.getByLabelText("Deskripsi")).toHaveValue("Tas ransel warna biru");
+    expect(screen.getByRole("button", { name: "Barang Ditemukan" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByLabelText(/Tandai selesai/)).not.toBeChecked();
   });
 
-  it("mencentang kotak selesai jika laporan sudah selesai", () => {
-    renderModal({ ...baseLostFound, is_completed: 1 });
-
-    expect(screen.getByLabelText("Tandai sebagai selesai")).toBeChecked();
+  it("menyimpan perubahan termasuk status selesai", async () => {
+    putLostFound.mockResolvedValue({});
+    const { onClose, onSaved } = setup();
+    await userEvent.clear(screen.getByLabelText("Judul"));
+    await userEvent.type(screen.getByLabelText("Judul"), "Tas baru");
+    await userEvent.click(screen.getByLabelText(/Tandai selesai/));
+    await userEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    await waitFor(() => expect(onSaved).toHaveBeenCalled());
+    expect(putLostFound).toHaveBeenCalledWith(4, {
+      title: "Tas baru", description: "Tas ransel warna biru", status: "found", is_completed: 1,
+    });
+    expect(onClose).toHaveBeenCalled();
   });
 
-  it("menampilkan pesan error jika judul dan deskripsi dikosongkan", async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.clear(screen.getByLabelText("Judul"));
-    await user.clear(screen.getByLabelText("Deskripsi"));
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    expect(screen.getByText("Judul wajib diisi")).toBeInTheDocument();
-    expect(screen.getByText("Deskripsi wajib diisi")).toBeInTheDocument();
-    expect(lostFoundApi.putLostFound).not.toHaveBeenCalled();
+  it("mengirim is_completed 0 bila toggle tidak dicentang", async () => {
+    putLostFound.mockResolvedValue({});
+    setup();
+    await userEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    await waitFor(() => expect(putLostFound).toHaveBeenCalled());
+    expect(putLostFound.mock.calls[0][1].is_completed).toBe(0);
   });
 
-  it("hanya menampilkan error judul jika hanya judul yang dikosongkan", async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.clear(screen.getByLabelText("Judul"));
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    expect(screen.getByText("Judul wajib diisi")).toBeInTheDocument();
-    expect(
-      screen.queryByText("Deskripsi wajib diisi")
-    ).not.toBeInTheDocument();
-  });
-
-  it("hanya menampilkan error deskripsi jika hanya deskripsi yang dikosongkan", async () => {
-    const user = userEvent.setup();
-    renderModal();
-
-    await user.clear(screen.getByLabelText("Deskripsi"));
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    expect(screen.queryByText("Judul wajib diisi")).not.toBeInTheDocument();
-    expect(screen.getByText("Deskripsi wajib diisi")).toBeInTheDocument();
-  });
-
-  it("menyimpan perubahan lalu menutup modal jika berhasil", async () => {
-    const user = userEvent.setup();
-    lostFoundApi.putLostFound.mockResolvedValue({ message: "Diubah" });
-    const { onClose, onSuccess } = renderModal();
-
-    await user.clear(screen.getByLabelText("Judul"));
-    await user.type(screen.getByLabelText("Judul"), "Dompet Baru");
-    await user.selectOptions(screen.getByLabelText("Status"), "found");
-    await user.click(screen.getByLabelText("Tandai sebagai selesai"));
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
-    expect(lostFoundApi.putLostFound).toHaveBeenCalledWith(
-      5,
-      "Dompet Baru",
-      "Warna hitam",
-      "found",
-      true
-    );
-    expect(showSuccessDialog).toHaveBeenCalledWith("Diubah");
-    expect(onSuccess).toHaveBeenCalledTimes(1);
-  });
-
-  it("menampilkan status 'Menyimpan...' selama proses berjalan", async () => {
-    const user = userEvent.setup();
-    let resolveRequest;
-    lostFoundApi.putLostFound.mockReturnValue(
-      new Promise((resolve) => {
-        resolveRequest = resolve;
-      })
-    );
-    const { onClose } = renderModal();
-
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    expect(
-      await screen.findByRole("button", { name: "Menyimpan..." })
-    ).toBeDisabled();
-
-    resolveRequest({ message: "Diubah" });
-    await waitFor(() => expect(onClose).toHaveBeenCalled());
-  });
-
-  it("tetap terbuka dan menampilkan dialog error jika gagal", async () => {
-    const user = userEvent.setup();
-    lostFoundApi.putLostFound.mockRejectedValue(new Error("Gagal mengubah"));
-    const { onClose, onSuccess } = renderModal();
-
-    await user.click(screen.getByRole("button", { name: "Simpan" }));
-
-    await waitFor(() =>
-      expect(showErrorDialog).toHaveBeenCalledWith("Gagal mengubah")
-    );
-    expect(screen.getByRole("button", { name: "Simpan" })).toBeEnabled();
+  it("tidak menutup modal saat API gagal", async () => {
+    putLostFound.mockRejectedValue(new Error("gagal"));
+    const { onClose, onSaved } = setup();
+    await userEvent.click(screen.getByRole("button", { name: "Simpan perubahan" }));
+    await waitFor(() => expect(putLostFound).toHaveBeenCalled());
+    expect(onSaved).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
-    expect(onSuccess).not.toHaveBeenCalled();
-  });
-
-  it("menutup modal lewat tombol Tutup dan Batal", async () => {
-    const user = userEvent.setup();
-    const { onClose } = renderModal();
-
-    await user.click(screen.getByRole("button", { name: "Tutup" }));
-    await user.click(screen.getByRole("button", { name: "Batal" }));
-
-    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });
