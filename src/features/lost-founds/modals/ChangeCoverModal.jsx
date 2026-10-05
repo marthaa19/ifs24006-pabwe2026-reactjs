@@ -1,73 +1,175 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { IconLoader2, IconPhoto } from "@tabler/icons-react";
-import ModalShell from "../../../components/ModalShell";
-import { resolveMediaUrl, showWarningDialog } from "../../../helpers/toolsHelper";
-import { asyncChangeLostFoundCover } from "../states/action";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { IconX } from "@tabler/icons-react";
+import useInput from "../../../hooks/useInput";
+import { asyncSetIsChangeLostFound } from "../states/action";
 
-export default function ChangeCoverModal({ item, onClose, onSaved }) {
+const inputClass =
+  "w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-indigo-500";
+
+function ChangeModal({ lostFound, onClose, onSuccess }) {
   const dispatch = useDispatch();
-  const busy = useSelector((state) => state.lostFounds.isLostFoundChangeCover);
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [title, handleTitleChange] = useInput(lostFound.title);
+  const [description, handleDescriptionChange] = useInput(
+    lostFound.description
+  );
+  const [status, handleStatusChange] = useInput(lostFound.status);
+  const [isCompleted, setIsCompleted] = useState(
+    Boolean(lostFound.is_completed)
+  );
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!file) return undefined;
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [file]);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const pickFile = (event) => {
-    const chosen = event.target.files[0];
-    if (chosen && !chosen.type.startsWith("image/")) {
-      showWarningDialog("Berkas harus berupa gambar (JPG, PNG, WEBP).");
+    const newErrors = {};
+    if (!title.trim()) {
+      newErrors.title = "Judul wajib diisi";
+    }
+    if (!description.trim()) {
+      newErrors.description = "Deskripsi wajib diisi";
+    }
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
-    setFile(chosen ?? null);
-  };
 
-  const save = async () => {
-    if (await dispatch(asyncChangeLostFoundCover(item.id, file))) {
-      onSaved();
+    setIsLoading(true);
+    const isSuccess = await dispatch(
+      asyncSetIsChangeLostFound(
+        lostFound.id,
+        title,
+        description,
+        status,
+        isCompleted
+      )
+    );
+    setIsLoading(false);
+
+    if (isSuccess) {
       onClose();
+      onSuccess();
     }
   };
 
-  const shown = preview ?? resolveMediaUrl(item.cover);
-
   return (
-    <ModalShell title="Ganti foto cover" subtitle="Pilih gambar, lihat pratinjau, lalu unggah." onClose={onClose}>
-      <div className="grid h-52 place-items-center overflow-hidden rounded-3xl bg-stone-100 ring-1 ring-stone-200">
-        {shown ? (
-          <img src={shown} alt="Pratinjau cover" className="size-full object-contain" />
-        ) : (
-          <span className="flex flex-col items-center gap-2 text-sm text-stone-600">
-            <IconPhoto size={36} /> Belum ada gambar
-          </span>
-        )}
-      </div>
-
-      <label htmlFor="cover-file" className="mb-1.5 mt-5 block text-sm font-bold text-stone-700">
-        Berkas gambar
-      </label>
-      <input
-        id="cover-file"
-        type="file"
-        accept="image/*"
-        onChange={pickFile}
-        className="w-full rounded-2xl border border-dashed border-stone-300 p-3 text-sm file:mr-3 file:rounded-xl file:border-0 file:bg-indigo-950 file:px-4 file:py-2 file:font-bold file:text-amber-300"
-      />
-
-      <button
-        type="button"
-        disabled={!file || busy}
-        onClick={save}
-        className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-950 py-3.5 font-bold text-amber-300 transition hover:bg-indigo-900 disabled:opacity-50"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="change-modal-title"
+        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
       >
-        {busy && <IconLoader2 size={18} className="animate-spin" />}
-        Unggah cover
-      </button>
-    </ModalShell>
+        <div className="flex items-center justify-between">
+          <h2 id="change-modal-title" className="text-lg font-bold">
+            Ubah Laporan
+          </h2>
+          <button
+            type="button"
+            aria-label="Tutup"
+            onClick={onClose}
+            className="rounded-lg p-1 text-slate-600 hover:bg-slate-100"
+          >
+            <IconX size={22} aria-hidden="true" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} noValidate className="mt-4 space-y-4">
+          <div>
+            <label
+              htmlFor="change-title"
+              className="mb-1 block text-sm font-medium"
+            >
+              Judul
+            </label>
+            <input
+              id="change-title"
+              name="title"
+              type="text"
+              value={title}
+              onChange={handleTitleChange}
+              className={inputClass}
+            />
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="change-description"
+              className="mb-1 block text-sm font-medium"
+            >
+              Deskripsi
+            </label>
+            <textarea
+              id="change-description"
+              name="description"
+              rows={4}
+              value={description}
+              onChange={handleDescriptionChange}
+              className={inputClass}
+            />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="change-status"
+              className="mb-1 block text-sm font-medium"
+            >
+              Status
+            </label>
+            <select
+              id="change-status"
+              name="status"
+              value={status}
+              onChange={handleStatusChange}
+              className={inputClass}
+            >
+              <option value="lost">Hilang</option>
+              <option value="found">Ditemukan</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              id="change-completed"
+              name="is_completed"
+              type="checkbox"
+              checked={isCompleted}
+              onChange={(event) => setIsCompleted(event.target.checked)}
+              className="h-4 w-4"
+            />
+            <label htmlFor="change-completed" className="text-sm font-medium">
+              Tandai sebagai selesai
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg px-4 py-2 font-medium text-slate-600 hover:bg-slate-100"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+            >
+              {isLoading ? "Menyimpan..." : "Simpan"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
+
+export default ChangeModal;
