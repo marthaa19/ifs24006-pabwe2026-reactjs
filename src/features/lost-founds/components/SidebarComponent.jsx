@@ -27,6 +27,7 @@ function SidebarComponent({ isOpen, onClose }) {
       >
         <div className="mb-4 flex items-center justify-between lg:hidden">
           <span className="text-lg font-extrabold text-indigo-600">Menu</span>
+
           <button
             type="button"
             aria-label="Tutup menu"
@@ -48,7 +49,7 @@ function SidebarComponent({ isOpen, onClose }) {
                 clsx(
                   "flex items-center gap-3 rounded-lg px-3 py-2 font-medium",
                   isActive
-                    ? "bg-indigo-50 text-indigo-700"
+                    ? "bg-indigo-50 text-indigo-600"
                     : "text-slate-600 hover:bg-slate-100"
                 )
               }
