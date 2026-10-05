@@ -6,10 +6,7 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import useInput from "../../../hooks/useInput";
 import { formatDate, toImageUrl } from "../../../helpers/toolsHelper";
 import AddModal from "../modals/AddModal";
-import {
-  asyncSetLostFounds,
-  asyncSetLostFoundStats,
-} from "../states/action";
+import { asyncSetLostFounds } from "../states/action";
 
 const filters = [
   { value: "", label: "Semua" },
@@ -17,40 +14,32 @@ const filters = [
   { value: "found", label: "Ditemukan" },
 ];
 
-function sumValues(record) {
-  return Object.values(record || {}).reduce((total, value) => total + value, 0);
-}
-
 function HomePage() {
   const dispatch = useDispatch();
   const lostFounds = useSelector((state) => state.lostFounds);
-  const lostFoundStats = useSelector((state) => state.lostFoundStats);
 
   const [statusFilter, setStatusFilter] = useState("");
   const [keyword, handleKeywordChange] = useInput("");
   const [isAddOpen, setIsAddOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(asyncSetLostFounds({ status: statusFilter }));
-  }, [dispatch, statusFilter]);
-
-  useEffect(() => {
-    dispatch(asyncSetLostFoundStats());
+    dispatch(asyncSetLostFounds());
   }, [dispatch]);
 
   const handleAddSuccess = () => {
-    dispatch(asyncSetLostFounds({ status: statusFilter }));
-    dispatch(asyncSetLostFoundStats());
+    dispatch(asyncSetLostFounds());
   };
 
-  const totalLost = sumValues(lostFoundStats?.stats_losts);
-  const totalFound = sumValues(lostFoundStats?.stats_founds);
-  const totalCompleted =
-    sumValues(lostFoundStats?.stats_losts_completed) +
-    sumValues(lostFoundStats?.stats_founds_completed);
+  const totalLost = lostFounds.filter((item) => item.status === "lost").length;
+  const totalFound = lostFounds.filter(
+    (item) => item.status === "found"
+  ).length;
+  const totalCompleted = lostFounds.filter(
+    (item) => item.is_completed === 1
+  ).length;
 
   const summaries = [
-    { label: "Total", value: totalLost + totalFound, color: "text-indigo-600" },
+    { label: "Total", value: lostFounds.length, color: "text-indigo-600" },
     { label: "Hilang", value: totalLost, color: "text-red-600" },
     { label: "Ditemukan", value: totalFound, color: "text-emerald-600" },
     { label: "Selesai", value: totalCompleted, color: "text-slate-700" },
@@ -59,8 +48,9 @@ function HomePage() {
   const lowerKeyword = keyword.trim().toLowerCase();
   const visibleLostFounds = lostFounds.filter(
     (item) =>
-      item.title.toLowerCase().includes(lowerKeyword) ||
-      item.description.toLowerCase().includes(lowerKeyword)
+      (statusFilter === "" || item.status === statusFilter) &&
+      (item.title.toLowerCase().includes(lowerKeyword) ||
+        item.description.toLowerCase().includes(lowerKeyword))
   );
 
   return (
@@ -69,7 +59,7 @@ function HomePage() {
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Ringkasan statistik harian dan daftar laporan.
+            Ringkasan statistik dan daftar laporan.
           </p>
         </div>
         <button

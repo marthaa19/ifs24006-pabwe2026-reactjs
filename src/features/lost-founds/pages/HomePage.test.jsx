@@ -8,7 +8,6 @@ import HomePage from "./HomePage";
 vi.mock("../api/lostFoundApi", () => ({
   default: {
     getLostFounds: vi.fn(),
-    getStatsDaily: vi.fn(),
     postLostFound: vi.fn(),
   },
 }));
@@ -42,22 +41,32 @@ const items = [
   },
 ];
 
-const stats = {
-  stats_losts: { "01-10-2024": 1, "02-10-2024": 2 },
-  stats_founds: { "01-10-2024": 3 },
-  stats_losts_completed: { "01-10-2024": 1 },
-  stats_founds_completed: { "01-10-2024": 0 },
-};
+const moreItems = [
+  ...items,
+  {
+    id: 3,
+    title: "Payung Biru",
+    description: "Tertinggal di perpustakaan",
+    status: "lost",
+    is_completed: 1,
+    cover: null,
+    created_at: "2024-03-01T07:49:32.000000Z",
+    author: { name: "Citra", photo: null },
+  },
+];
+
+function cardValue(label) {
+  return screen.getByText(label, { selector: "p" }).nextElementSibling;
+}
 
 beforeEach(() => {
   lostFoundApi.getLostFounds.mockResolvedValue({
     data: { lost_founds: items },
   });
-  lostFoundApi.getStatsDaily.mockResolvedValue({ data: stats });
 });
 
 describe("HomePage - daftar laporan", () => {
-  it("memuat daftar laporan dan statistik saat dibuka", async () => {
+  it("memuat semua laporan satu kali saat dibuka", async () => {
     renderWithProviders(<HomePage />);
 
     expect(
@@ -65,8 +74,7 @@ describe("HomePage - daftar laporan", () => {
     ).toBeInTheDocument();
     expect(await screen.findByText("Dompet Hitam")).toBeInTheDocument();
     expect(screen.getByText("Kunci Motor")).toBeInTheDocument();
-    expect(lostFoundApi.getLostFounds).toHaveBeenCalledWith({ status: "" });
-    expect(lostFoundApi.getStatsDaily).toHaveBeenCalledTimes(1);
+    expect(lostFoundApi.getLostFounds).toHaveBeenCalledTimes(1);
   });
 
   it("menampilkan cover, tulisan 'Tanpa cover', nama pelapor, dan tautan detail", async () => {
@@ -108,51 +116,59 @@ describe("HomePage - daftar laporan", () => {
   });
 });
 
-describe("HomePage - statistik", () => {
-  it("menampilkan angka 0 sebelum statistik dimuat", () => {
-    lostFoundApi.getStatsDaily.mockReturnValue(new Promise(() => {}));
+describe("HomePage - kartu ringkasan", () => {
+  it("menampilkan angka 0 sebelum laporan dimuat", () => {
+    lostFoundApi.getLostFounds.mockReturnValue(new Promise(() => {}));
 
     renderWithProviders(<HomePage />);
 
-    expect(screen.getAllByText("0")).toHaveLength(4);
+    expect(cardValue("Total")).toHaveTextContent("0");
+    expect(cardValue("Hilang")).toHaveTextContent("0");
+    expect(cardValue("Ditemukan")).toHaveTextContent("0");
+    expect(cardValue("Selesai")).toHaveTextContent("0");
   });
 
-  it("menjumlahkan statistik harian pada kartu ringkasan", async () => {
-    renderWithProviders(<HomePage />);
+  it("menghitung total, hilang, ditemukan, dan selesai dari daftar laporan", async () => {
+    lostFoundApi.getLostFounds.mockResolvedValue({
+      data: { lost_founds: moreItems },
+    });
 
-    // Total = 6, Hilang = 3, Ditemukan = 3, Selesai = 1
-    expect(await screen.findByText("6")).toBeInTheDocument();
-    expect(screen.getAllByText("3")).toHaveLength(2);
-    expect(screen.getByText("1")).toBeInTheDocument();
+    renderWithProviders(<HomePage />);
+    await screen.findByText("Payung Biru");
+
+    expect(cardValue("Total")).toHaveTextContent("3");
+    expect(cardValue("Hilang")).toHaveTextContent("2");
+    expect(cardValue("Ditemukan")).toHaveTextContent("1");
+    expect(cardValue("Selesai")).toHaveTextContent("2");
   });
 });
 
 describe("HomePage - filter status", () => {
-  it("memuat ulang daftar sesuai tombol filter yang dipilih", async () => {
+  it("menyaring daftar tanpa memanggil server lagi dan tanpa mengubah kartu", async () => {
     const user = userEvent.setup();
+    lostFoundApi.getLostFounds.mockResolvedValue({
+      data: { lost_founds: moreItems },
+    });
     renderWithProviders(<HomePage />);
     await screen.findByText("Dompet Hitam");
 
     await user.click(screen.getByRole("button", { name: "Hilang" }));
-    await waitFor(() =>
-      expect(lostFoundApi.getLostFounds).toHaveBeenLastCalledWith({
-        status: "lost",
-      })
-    );
+    expect(screen.getByText("Dompet Hitam")).toBeInTheDocument();
+    expect(screen.getByText("Payung Biru")).toBeInTheDocument();
+    expect(screen.queryByText("Kunci Motor")).not.toBeInTheDocument();
+    expect(cardValue("Total")).toHaveTextContent("3");
 
     await user.click(screen.getByRole("button", { name: "Ditemukan" }));
-    await waitFor(() =>
-      expect(lostFoundApi.getLostFounds).toHaveBeenLastCalledWith({
-        status: "found",
-      })
-    );
+    expect(screen.getByText("Kunci Motor")).toBeInTheDocument();
+    expect(screen.queryByText("Dompet Hitam")).not.toBeInTheDocument();
+    expect(screen.queryByText("Payung Biru")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Semua" }));
-    await waitFor(() =>
-      expect(lostFoundApi.getLostFounds).toHaveBeenLastCalledWith({
-        status: "",
-      })
-    );
+    expect(screen.getByText("Dompet Hitam")).toBeInTheDocument();
+    expect(screen.getByText("Kunci Motor")).toBeInTheDocument();
+    expect(screen.getByText("Payung Biru")).toBeInTheDocument();
+
+    expect(lostFoundApi.getLostFounds).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -190,6 +206,22 @@ describe("HomePage - pencarian", () => {
       screen.getByText("Belum ada laporan yang cocok.")
     ).toBeInTheDocument();
   });
+
+  it("menggabungkan filter status dan pencarian", async () => {
+    const user = userEvent.setup();
+    lostFoundApi.getLostFounds.mockResolvedValue({
+      data: { lost_founds: moreItems },
+    });
+    renderWithProviders(<HomePage />);
+    await screen.findByText("Dompet Hitam");
+
+    await user.click(screen.getByRole("button", { name: "Hilang" }));
+    await user.type(screen.getByLabelText("Cari laporan"), "payung");
+
+    expect(screen.getByText("Payung Biru")).toBeInTheDocument();
+    expect(screen.queryByText("Dompet Hitam")).not.toBeInTheDocument();
+    expect(screen.queryByText("Kunci Motor")).not.toBeInTheDocument();
+  });
 });
 
 describe("HomePage - tambah laporan", () => {
@@ -209,7 +241,7 @@ describe("HomePage - tambah laporan", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("memuat ulang daftar dan statistik setelah laporan berhasil ditambahkan", async () => {
+  it("memuat ulang daftar setelah laporan berhasil ditambahkan", async () => {
     const user = userEvent.setup();
     lostFoundApi.postLostFound.mockResolvedValue({ message: "Ditambahkan" });
     renderWithProviders(<HomePage />);
@@ -223,7 +255,6 @@ describe("HomePage - tambah laporan", () => {
     await waitFor(() =>
       expect(lostFoundApi.getLostFounds).toHaveBeenCalledTimes(2)
     );
-    expect(lostFoundApi.getStatsDaily).toHaveBeenCalledTimes(2);
     expect(lostFoundApi.postLostFound).toHaveBeenCalledWith(
       "Payung",
       "Warna biru",

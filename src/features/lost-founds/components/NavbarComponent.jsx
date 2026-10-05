@@ -14,6 +14,10 @@ function NavbarComponent({ onToggleSidebar }) {
     navigate("/auth/login");
   };
 
+  if (!profile) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4">
       <div className="flex items-center gap-3">
@@ -25,54 +29,37 @@ function NavbarComponent({ onToggleSidebar }) {
         >
           <IconMenu2 size={24} />
         </button>
-
         <div className="flex items-center gap-2 text-indigo-600">
           <IconSearch size={26} />
-          <span className="text-lg font-extrabold">
-            Lost &amp; Founds
-          </span>
+          <span className="text-lg font-extrabold">Lost &amp; Founds</span>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        {profile ? (
-          <>
-            <div className="flex items-center gap-2">
-              {profile.photo ? (
-                <img
-                  src={toImageUrl(profile.photo)}
-                  alt={profile.name}
-                  className="h-9 w-9 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-600">
-                  {profile.name?.charAt(0)?.toUpperCase() || "U"}
-                </div>
-              )}
-
-              <span className="hidden text-sm font-medium sm:block">
-                {profile.name}
-              </span>
+        <div className="flex items-center gap-2">
+          {profile.photo ? (
+            <img
+              src={toImageUrl(profile.photo)}
+              alt={profile.name}
+              className="h-9 w-9 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-600">
+              {profile.name.charAt(0).toUpperCase()}
             </div>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-            >
-              <IconLogout size={20} />
-              <span className="hidden sm:block">Keluar</span>
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={() => navigate("/auth/login")}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            Masuk
-          </button>
-        )}
+          )}
+          <span className="hidden text-sm font-medium sm:block">
+            {profile.name}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+        >
+          <IconLogout size={20} />
+          <span className="hidden sm:block">Keluar</span>
+        </button>
       </div>
     </header>
   );

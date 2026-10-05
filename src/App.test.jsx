@@ -13,8 +13,13 @@ vi.mock("./features/lost-founds/api/lostFoundApi", () => ({
   default: {
     getLostFounds: vi.fn(),
     getLostFoundById: vi.fn(),
-    getStatsDaily: vi.fn(),
   },
+}));
+
+vi.mock("./helpers/toolsHelper", async (importOriginal) => ({
+  ...(await importOriginal()),
+  showErrorDialog: vi.fn(),
+  showSuccessDialog: vi.fn(),
 }));
 
 const profile = { id: 1, name: "Budi", email: "budi@x.com", photo: null };
@@ -42,7 +47,6 @@ function loginAs() {
   lostFoundApi.getLostFounds.mockResolvedValue({
     data: { lost_founds: [] },
   });
-  lostFoundApi.getStatsDaily.mockResolvedValue({ data: {} });
   lostFoundApi.getLostFoundById.mockResolvedValue({
     data: { lost_found: lostFound },
   });
