@@ -89,7 +89,7 @@ function ChangeCoverModal({ lostFound, onClose, onSuccess }) {
               accept="image/*"
               onChange={handleFileChange}
             />
-            {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+            {error && <p className="mt-1 text-sm    text-red-700">{error}</p>}
           </div>
 
           <div className="flex justify-end gap-2">

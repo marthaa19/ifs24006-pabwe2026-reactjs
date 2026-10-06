@@ -58,7 +58,7 @@ function RegisterPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold">Daftar</h2>
+      <h1 className="text-2xl font-bold">Daftar</h1>
       <p className="mt-1 text-sm text-slate-600">
         Buat akun baru untuk mulai melapor.
       </p>
@@ -82,7 +82,7 @@ function RegisterPage() {
             className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+            <p className="mt-1 text-sm text-red-700">{errors.name}</p>
           )}
         </div>
 
@@ -104,7 +104,7 @@ function RegisterPage() {
             className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            <p className="mt-1 text-sm text-red-700">{errors.email}</p>
           )}
         </div>
 
@@ -126,7 +126,7 @@ function RegisterPage() {
             className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none placeholder:text-slate-500 focus:border-indigo-500"
           />
           {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            <p className="mt-1 text-sm text-red-700">{errors.password}</p>
           )}
         </div>
 

@@ -27,9 +27,9 @@ function LostFoundLayout() {
 
   if (!isReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-slate-500">
+      <main className="flex min-h-screen items-center justify-center text-slate-600">
         Memuat...
-      </div>
+      </main>
     );
   }
 

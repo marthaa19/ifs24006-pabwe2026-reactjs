@@ -11,10 +11,10 @@ function AuthLayout() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <main className="flex min-h-screen">
       <div className="hidden flex-1 flex-col items-center justify-center bg-indigo-600 p-10 text-white lg:flex">
         <IconSearch size={72} stroke={1.5} aria-hidden="true" />
-        <h1 className="mt-6 text-4xl font-extrabold">Lost &amp; Founds</h1>
+        <p className="mt-6 text-4xl font-extrabold">Lost &amp; Founds</p>
         <p className="mt-3 max-w-sm text-center text-indigo-100">
           Laporkan barang yang hilang atau temukan pemiliknya dengan mudah.
         </p>
@@ -25,7 +25,7 @@ function AuthLayout() {
           <Outlet />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

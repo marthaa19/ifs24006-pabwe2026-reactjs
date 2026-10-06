@@ -118,7 +118,7 @@ function ProfilePage() {
               className={inputClass}
             />
             {profileErrors.name && (
-              <p className="mt-1 text-sm text-red-600">{profileErrors.name}</p>
+              <p className="mt-1 text-sm    text-red-700">{profileErrors.name}</p>
             )}
           </div>
           <div>
@@ -135,7 +135,7 @@ function ProfilePage() {
               className={inputClass}
             />
             {profileErrors.email && (
-              <p className="mt-1 text-sm text-red-600">{profileErrors.email}</p>
+              <p className="mt-1 text-sm    text-red-700">{profileErrors.email}</p>
             )}
           </div>
           <button type="submit" className={buttonClass}>
@@ -174,7 +174,7 @@ function ProfilePage() {
               />
             </div>
           </div>
-          {photoError && <p className="text-sm text-red-600">{photoError}</p>}
+          {photoError && <p className="text-sm    text-red-700">{photoError}</p>}
           <button type="submit" className={buttonClass}>
             Unggah Foto
           </button>
@@ -205,7 +205,7 @@ function ProfilePage() {
               className={inputClass}
             />
             {passwordErrors.password && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-sm    text-red-700">
                 {passwordErrors.password}
               </p>
             )}
@@ -227,7 +227,7 @@ function ProfilePage() {
               className={inputClass}
             />
             {passwordErrors.newPassword && (
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-1 text-sm    text-red-700">
                 {passwordErrors.newPassword}
               </p>
             )}

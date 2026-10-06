@@ -93,7 +93,7 @@ function ChangeModal({ lostFound, onClose, onSuccess }) {
               className={inputClass}
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+              <p className="mt-1 text-sm    text-red-700">{errors.title}</p>
             )}
           </div>
 
@@ -113,7 +113,7 @@ function ChangeModal({ lostFound, onClose, onSuccess }) {
               className={inputClass}
             />
             {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-1 text-sm    text-red-700">{errors.description}</p>
             )}
           </div>
 

@@ -40,7 +40,7 @@ function HomePage() {
 
   const summaries = [
     { label: "Total", value: lostFounds.length, color: "text-indigo-600" },
-    { label: "Hilang", value: totalLost, color: "text-red-600" },
+    { label: "Hilang", value: totalLost, color: "   text-red-700" },
     { label: "Ditemukan", value: totalFound, color: "text-emerald-700" },
     { label: "Selesai", value: totalCompleted, color: "text-slate-700" },
   ];

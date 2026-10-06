@@ -58,7 +58,7 @@ function NavbarComponent({ onToggleSidebar }) {
           type="button"
           onClick={handleLogout}
           aria-label="Keluar"
-          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium    text-red-700 hover:bg-red-50"
         >
           <IconLogout size={20} aria-hidden="true" />
           <span className="hidden sm:block">Keluar</span>
