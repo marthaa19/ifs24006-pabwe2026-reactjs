@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuthLayout from "./features/auth/layouts/AuthLayout";
 import LoginPage from "./features/auth/pages/LoginPage";
@@ -13,24 +13,22 @@ const ProfilePage = lazy(() => import("./features/users/pages/ProfilePage"));
 
 function App() {
   return (
-    <Suspense fallback={<p className="sr-only">Memuat halaman</p>}>
-      <Routes>
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route index element={<Navigate to="login" replace />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-        </Route>
+    <Routes>
+      <Route path="/auth" element={<AuthLayout />}>
+        <Route index element={<Navigate to="login" replace />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+      </Route>
 
-        <Route path="/" element={<LostFoundLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="lost-founds/:id" element={<DetailPage />} />
-          <Route path="users" element={<UsersPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-        </Route>
+      <Route path="/" element={<LostFoundLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="lost-founds/:id" element={<DetailPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 

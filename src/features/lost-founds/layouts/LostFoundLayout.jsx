@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import apiHelper from "../../../helpers/apiHelper";
@@ -46,7 +46,9 @@ function LostFoundLayout() {
           onClose={() => setIsSidebarOpen(false)}
         />
         <main className="min-w-0 flex-1 p-4 sm:p-6">
-          <Outlet />
+          <Suspense fallback={<h1 className="sr-only">Memuat halaman</h1>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
