@@ -12,7 +12,14 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen">
-  <div id="root"></div>
+  <div id="root">
+    <!-- App shell statis: tampil seketika sebelum JavaScript siap, lalu digantikan React -->
+    <div class="flex min-h-screen flex-col items-center justify-center gap-4 bg-indigo-600 p-8 text-center text-white">
+      <p class="max-w-2xl text-3xl font-extrabold leading-tight lg:text-5xl">Barangmu hilang?<br />Atau kamu menemukannya?</p>
+      <p class="max-w-md text-indigo-100">Laporkan barang hilang atau temuan, tambahkan foto, dan pantau sampai kembali ke pemiliknya.</p>
+    </div>
+  </div>
+  <noscript>Aplikasi ini membutuhkan JavaScript untuk berjalan.</noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

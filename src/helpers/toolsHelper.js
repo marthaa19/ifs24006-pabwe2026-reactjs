@@ -1,7 +1,11 @@
-import Swal from "sweetalert2";
+// SweetAlert2 dimuat hanya saat dialog pertama kali dibutuhkan (mengurangi unused JavaScript).
+async function fire(options) {
+  const { default: Swal } = await import("sweetalert2");
+  return Swal.fire(options);
+}
 
 export function showSuccessDialog(message) {
-  return Swal.fire({
+  return fire({
     icon: "success",
     title: "Berhasil",
     text: message,
@@ -10,7 +14,7 @@ export function showSuccessDialog(message) {
 }
 
 export function showErrorDialog(message) {
-  return Swal.fire({
+  return fire({
     icon: "error",
     title: "Gagal",
     text: message,
@@ -19,7 +23,7 @@ export function showErrorDialog(message) {
 }
 
 export async function showConfirmDialog(message, confirmText = "Ya") {
-  const result = await Swal.fire({
+  const result = await fire({
     icon: "warning",
     title: "Konfirmasi",
     text: message,
@@ -54,6 +58,5 @@ export function toImageUrl(path) {
     return path;
   }
 
-  const host = DELCOM_BASEURL.replace(/\/api\/v1\/?$/, "");
-  return `${host}/${path.replace(/^\//, "")}`;
+  return `${DELCOM_ORIGIN}/${path.replace(/^\//, "")}`;
 }
