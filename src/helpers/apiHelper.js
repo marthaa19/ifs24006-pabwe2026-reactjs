@@ -13,7 +13,7 @@ function removeAccessToken() {
 }
 
 function buildUrl(path, params = {}) {
-  const url = new URL(`${DELCOM_BASEURL}${path}`);
+  const url = new URL(`${DELCOM_BASEURL}${path}`, window.location.origin);
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
